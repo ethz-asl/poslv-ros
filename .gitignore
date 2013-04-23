@@ -1,6 +1,8 @@
 applanix/bin
 applanix/build
 applanix/lib
+applanix/msg_gen
+applanix/src
 applanix_driver/bin
 applanix_driver/build
 applanix_driver/lib
