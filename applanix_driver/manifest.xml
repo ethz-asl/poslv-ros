@@ -1,0 +1,17 @@
+<package>
+  <description brief="applanix_driver">
+
+     applanix_driver
+
+  </description>
+  <author>Paul Furgale</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/applanix_driver</url>
+
+  <depend package="roscpp"/>
+  <depend package="applanix"/>
+
+</package>
+
+

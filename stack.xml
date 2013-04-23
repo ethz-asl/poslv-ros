@@ -1,0 +1,10 @@
+<stack>
+  <description brief="poslv_ros">
+    A ROS wrapper for libposlv.
+  </description>
+  <author>Maintained by Jerome Maye</author>
+  <license>LGPL</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/poslv_ros</url>
+<!--  <depend stack="ros"/>-->
+</stack>

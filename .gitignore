@@ -1,3 +1,6 @@
-bin
-build
-lib
+applanix/bin
+applanix/build
+applanix/lib
+applanix_driver/bin
+applanix_driver/build
+applanix_driver/lib
