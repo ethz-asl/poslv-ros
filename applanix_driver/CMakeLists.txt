@@ -33,7 +33,6 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 ## Find LibPosLV
 find_path(LIBPOSLV_INCLUDE_DIR sensor/POSLVComTCP.h
-  /usr/local/include
   /usr/include
   PATH_SUFFIXES
   libposlv
@@ -42,23 +41,16 @@ find_path(LIBPOSLV_INCLUDE_DIR sensor/POSLVComTCP.h
 message(Found ${LIBPOSLV_INCLUDE_DIR})
 
 find_library(LIBPOSLV_SENSOR poslv-sensor
-	/usr/local/lib
-	/usr/lib
+  /usr/lib
 )
-
 find_library(LIBPOSLV_COM poslv-com
-        /usr/local/lib
-        /usr/lib
+  /usr/lib
 )
-
 find_library(LIBPOSLV_TYPES poslv-types
-        /usr/local/lib
-        /usr/lib
+  /usr/lib
 )
-
 find_library(LIBPOSLV_EXCEPTIONS poslv-exceptions
-        /usr/local/lib
-        /usr/lib
+  /usr/lib
 )
 
 #common commands for building c++ executables and libraries
