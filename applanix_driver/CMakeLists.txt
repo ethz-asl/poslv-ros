@@ -18,20 +18,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-#uncomment if you have defined messages
-#rosbuild_genmsg()
-#uncomment if you have defined services
-#rosbuild_gensrv()
-
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
-
-## Find LibPosLV
+# Find LibPosLV
 find_path(LIBPOSLV_INCLUDE_DIR sensor/POSLVComTCP.h
   /usr/include
   PATH_SUFFIXES
@@ -53,11 +40,8 @@ find_library(LIBPOSLV_EXCEPTIONS poslv-exceptions
   /usr/lib
 )
 
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
 rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
 include_directories(${LIBPOSLV_INCLUDE_DIR})
 rosbuild_add_executable(applanix_node src/applanix_node.cpp)
-target_link_libraries(applanix_node ${LIBPOSLV_SENSOR} ${LIBPOSLV_COM} ${LIBPOSLV_TYPES} ${LIBPOSLV_EXCEPTIONS})
+target_link_libraries(applanix_node ${LIBPOSLV_SENSOR} ${LIBPOSLV_COM}
+  ${LIBPOSLV_TYPES} ${LIBPOSLV_EXCEPTIONS})
