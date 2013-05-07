@@ -1,6 +1,12 @@
 libposlv-dev:
-  ubuntu: [libposlv-dev]
+  ubuntu:
+    apt:
+      packages: [libposlv-dev]
 libposlv-ntrip-dev:
-  ubuntu: [libposlv-ntrip-dev]
+  ubuntu:
+    apt:
+      packages: [libposlv-ntrip-dev]
 libposlv-geo-tools-dev:
-  ubuntu: [libposlv-geo-tools-dev]
+  ubuntu:
+    apt:
+      packages: [libposlv-geo-tools-dev]
