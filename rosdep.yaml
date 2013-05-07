@@ -1,12 +1,3 @@
-libposlv-dev:
-  ubuntu:
-    apt:
-      packages: [libposlv-dev]
-libposlv-ntrip-dev:
-  ubuntu:
-    apt:
-      packages: [libposlv-ntrip-dev]
-libposlv-geo-tools-dev:
-  ubuntu:
-    apt:
-      packages: [libposlv-geo-tools-dev]
+alsa-oss:
+  debian: [alsa-oss]
+  ubuntu: [alsa-oss]
