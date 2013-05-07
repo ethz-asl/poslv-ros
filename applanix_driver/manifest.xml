@@ -11,5 +11,6 @@
 
   <depend package="roscpp"/>
   <depend package="applanix"/>
+  <rosdep name="libposlv-dev"/>
 
 </package>
