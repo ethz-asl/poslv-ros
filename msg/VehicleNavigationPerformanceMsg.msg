@@ -1,7 +1,7 @@
 Header header
 # /// Time/Distance field
 # TimeDistance mTimeDistance
-applanix/TimeDistanceMsg TimeDistance
+poslv_ros/TimeDistanceMsg TimeDistance
 # /// North position RMS error
 float32 NorthPositionRMSError
 # /// East position RMS error

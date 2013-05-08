@@ -1,8 +1,5 @@
-applanix/bin
-applanix/build
-applanix/lib
-applanix/msg_gen
-applanix/src/applanix
-applanix_driver/bin
-applanix_driver/build
-applanix_driver/lib
+bin
+lib
+build
+msg_gen
+src/poslv_ros

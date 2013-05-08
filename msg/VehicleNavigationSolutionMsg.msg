@@ -1,6 +1,6 @@
 Header header
 # TimeDistance mTimeDistance;
-applanix/TimeDistanceMsg TimeDistance
+poslv_ros/TimeDistanceMsg TimeDistance
 # /// Latitude
 float64 Latitude
 # /// Longitude
