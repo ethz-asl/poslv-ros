@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  ******************************************************************************/
 
-#include "janeth/PosLvNode.h"
+#include "PosLvNode.h"
 
 #include <diagnostic_updater/publisher.h>
 
@@ -34,11 +34,11 @@
 #include <libposlv/types/Packet.h>
 #include <libposlv/types/Group.h>
 
-#include "poslv_ros/VehicleNavigationSolutionMsg.h"
-#include "poslv_ros/VehicleNavigationPerformanceMsg.h"
-#include "poslv_ros/TimeTaggedDMIDataMsg.h"
+#include "poslv/VehicleNavigationSolutionMsg.h"
+#include "poslv/VehicleNavigationPerformanceMsg.h"
+#include "poslv/TimeTaggedDMIDataMsg.h"
 
-namespace janeth {
+namespace poslv {
 
 /******************************************************************************/
 /* Constructors and Destructor                                                */
@@ -48,26 +48,16 @@ namespace janeth {
       _nodeHandle(nh),
       _alignStatus(8),
       _navStatus(-1) {
-    _nodeHandle.param<std::string>("frame_id", _frameId, "vehicle_base_link");
-    _nodeHandle.param<std::string>("device_ip", _deviceIpStr, "129.132.39.171");
-    _nodeHandle.param<int>("device_port", _devicePort, 5602);
-    _nodeHandle.param<double>("retry_timeout", _retryTimeout, 1);
-    _nodeHandle.param<double>("vns_min_freq", _vnsMinFreq, 1);
-    _nodeHandle.param<double>("vns_max_freq", _vnsMaxFreq, 200);
-    _nodeHandle.param<double>("vnp_min_freq", _vnpMinFreq, 0.5);
-    _nodeHandle.param<double>("vnp_max_freq", _vnpMaxFreq, 1);
-    _nodeHandle.param<double>("dmi_min_freq", _dmiMinFreq, 1);
-    _nodeHandle.param<double>("dmi_max_freq", _dmiMaxFreq, 200);
-    const int queueDepth = 100;
+    getParameters();
     _vehicleNavigationSolutionPublisher =
-      _nodeHandle.advertise<poslv_ros::VehicleNavigationSolutionMsg>(
-      "vehicle_navigation_solution", queueDepth);
+      _nodeHandle.advertise<poslv::VehicleNavigationSolutionMsg>(
+      "vehicle_navigation_solution", _queueDepth);
     _vehicleNavigationPerformancePublisher =
-      _nodeHandle.advertise<poslv_ros::VehicleNavigationPerformanceMsg>(
-      "vehicle_navigation_performance", queueDepth);
+      _nodeHandle.advertise<poslv::VehicleNavigationPerformanceMsg>(
+      "vehicle_navigation_performance", _queueDepth);
     _timeTaggedDMIDataPublisher =
-      _nodeHandle.advertise<poslv_ros::TimeTaggedDMIDataMsg>(
-      "time_tagged_dmi_data", queueDepth);
+      _nodeHandle.advertise<poslv::TimeTaggedDMIDataMsg>(
+      "time_tagged_dmi_data", _queueDepth);
     _updater.setHardwareID("none");
     _updater.add("TCP connection", this, &PosLvNode::diagnoseTCPConnection);
     _updater.add("Alignement status", this, &PosLvNode::diagnoseAlignStatus);
@@ -96,8 +86,8 @@ namespace janeth {
 
   void PosLvNode::publishVehicleNavigationSolution(const ros::Time& timestamp,
       const VehicleNavigationSolution& vns) {
-    boost::shared_ptr<poslv_ros::VehicleNavigationSolutionMsg> vnsMsg(
-      new poslv_ros::VehicleNavigationSolutionMsg);
+    boost::shared_ptr<poslv::VehicleNavigationSolutionMsg> vnsMsg(
+      new poslv::VehicleNavigationSolutionMsg);
     vnsMsg->header.stamp = timestamp;
     vnsMsg->header.frame_id = _frameId;
     vnsMsg->TimeDistance.Time1 = vns.mTimeDistance.mTime1;
@@ -131,8 +121,8 @@ namespace janeth {
 
   void PosLvNode::publishVehicleNavigationPerformance(
       const ros::Time& timestamp, const VehicleNavigationPerformance& vnp) {
-    boost::shared_ptr<poslv_ros::VehicleNavigationPerformanceMsg> vnpMsg(
-      new poslv_ros::VehicleNavigationPerformanceMsg);
+    boost::shared_ptr<poslv::VehicleNavigationPerformanceMsg> vnpMsg(
+      new poslv::VehicleNavigationPerformanceMsg);
     vnpMsg->header.stamp = timestamp;
     vnpMsg->header.frame_id = _frameId;
     vnpMsg->TimeDistance.Time1 = vnp.mTimeDistance.mTime1;
@@ -158,8 +148,8 @@ namespace janeth {
 
   void PosLvNode::publishTimeTaggedDMIData(
       const ros::Time& timestamp, const TimeTaggedDMIData& dmi) {
-    boost::shared_ptr<poslv_ros::TimeTaggedDMIDataMsg> dmiMsg(
-      new poslv_ros::TimeTaggedDMIDataMsg);
+    boost::shared_ptr<poslv::TimeTaggedDMIDataMsg> dmiMsg(
+      new poslv::TimeTaggedDMIDataMsg);
     dmiMsg->header.stamp = timestamp;
     dmiMsg->header.frame_id = _frameId;
     dmiMsg->TimeDistance.Time1 = dmi.mTimeDistance.mTime1;
@@ -322,6 +312,22 @@ namespace janeth {
       _updater.update();
       ros::spinOnce();
     }
+  }
+
+  void PosLvNode::getParameters() {
+    _nodeHandle.param<std::string>("ros/frame_id", _frameId,
+      "vehicle_base_link");
+    _nodeHandle.param<int>("ros/queue_depth", _queueDepth, 100);
+    _nodeHandle.param<std::string>("connection/device_ip", _deviceIpStr,
+      "129.132.39.171");
+    _nodeHandle.param<int>("connection/device_port", _devicePort, 5602);
+    _nodeHandle.param<double>("connection/retry_timeout", _retryTimeout, 1);
+    _nodeHandle.param<double>("diagnostics/vns_min_freq", _vnsMinFreq, 1);
+    _nodeHandle.param<double>("diagnostics/vns_max_freq", _vnsMaxFreq, 200);
+    _nodeHandle.param<double>("diagnostics/vnp_min_freq", _vnpMinFreq, 0.5);
+    _nodeHandle.param<double>("diagnostics/vnp_max_freq", _vnpMaxFreq, 1);
+    _nodeHandle.param<double>("diagnostics/dmi_min_freq", _dmiMinFreq, 1);
+    _nodeHandle.param<double>("diagnostics/dmi_max_freq", _dmiMaxFreq, 200);
   }
 
 }

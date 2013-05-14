@@ -39,7 +39,7 @@ namespace diagnostic_updater {
   class HeaderlessTopicDiagnostic;
 }
 
-namespace janeth {
+namespace poslv {
 
   /** The class PosLvNode implements the Applanix POSL LV node.
       \brief POS LV node
@@ -93,6 +93,8 @@ namespace janeth {
     /// Diagnose the alignment status
     void diagnoseAlignStatus(diagnostic_updater::DiagnosticStatusWrapper&
       status);
+    /// Retrieves parameters
+    void getParameters();
     /** @}
       */
 
@@ -141,6 +143,8 @@ namespace janeth {
     uint8_t _alignStatus;
     /// Navigation solution status
     int8_t _navStatus;
+    /// Queue depth
+    int _queueDepth;
     /** @}
       */
 

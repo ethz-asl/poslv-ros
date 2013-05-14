@@ -1,6 +1,6 @@
 Header header
 # TimeDistance mTimeDistance;
-poslv_ros/TimeDistanceMsg TimeDistance
+poslv/TimeDistanceMsg TimeDistance
 # /// Latitude
 float64 Latitude
 # /// Longitude

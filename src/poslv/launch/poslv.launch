@@ -1,0 +1,5 @@
+<launch>
+  <node name="poslv" pkg="poslv" type="poslv_node" output="screen">
+    <rosparam command="load" file="$(find poslv)/etc/poslv.yaml"/>
+  </node>
+</launch>

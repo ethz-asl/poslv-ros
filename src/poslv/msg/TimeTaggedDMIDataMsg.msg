@@ -1,6 +1,6 @@
 Header header
 # TimeDistance mTimeDistance
-poslv_ros/TimeDistanceMsg TimeDistance
+poslv/TimeDistanceMsg TimeDistance
 # /// Signed distance traveled
 float64 SignedDistanceTraveled
 # /// Unsigned distance traveled

@@ -1,7 +1,7 @@
 Header header
 # /// Time/Distance field
 # TimeDistance mTimeDistance
-poslv_ros/TimeDistanceMsg TimeDistance
+poslv/TimeDistanceMsg TimeDistance
 # /// North position RMS error
 float32 NorthPositionRMSError
 # /// East position RMS error

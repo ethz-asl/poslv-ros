@@ -1,0 +1,96 @@
+poslv-ros (0.1-16) precise; urgency=low
+
+  * adding diagnostics
+  * restructuring
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-15) precise; urgency=low
+
+  * adding dependency
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-14) precise; urgency=low
+
+  * final yaml
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-13) precise; urgency=low
+
+  * testing
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-12) precise; urgency=low
+
+  * same fiddling
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-11) precise; urgency=low
+
+  * fiddling around with yaml
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-10) precise; urgency=low
+
+  * correcting yaml file
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-9) precise; urgency=low
+
+  * adding rosdep.yaml
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-8) precise; urgency=low
+
+  * changed license to LGPL
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-7) precise; urgency=low
+
+  * build in release mode
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-6) precise; urgency=low
+
+  * refactoring
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-5) precise; urgency=low
+
+  * changed CMakeLists
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-4) precise; urgency=low
+
+  * update gitignore
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-3) precise; urgency=low
+
+  * changing gitignore
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-2) precise; urgency=low
+
+  * Initial commit
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000
+
+poslv-ros (0.1-1) precise; urgency=low
+
+  * first commit
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:27:53 +0000

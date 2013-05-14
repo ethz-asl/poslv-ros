@@ -22,13 +22,13 @@
 
 #include <ros/ros.h>
 
-#include "janeth/PosLvNode.h"
+#include "PosLvNode.h"
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "poslv");
   ros::NodeHandle nh("~");
   try {
-    janeth::PosLvNode pn(nh);
+    poslv::PosLvNode pn(nh);
     pn.spin();
   }
   catch (const std::exception& e) {
