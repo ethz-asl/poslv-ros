@@ -1,3 +1,9 @@
+poslv-ros (0.1-18) precise; urgency=low
+
+  * porting to remake (corrected changelog)
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 14 May 2013 20:44:39 +0000
+
 poslv-ros (0.1-16) precise; urgency=low
 
   * adding diagnostics
