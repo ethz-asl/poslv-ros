@@ -88,8 +88,12 @@ namespace poslv {
     /// Diagnose the TCP connection
     void diagnoseTCPConnection(diagnostic_updater::DiagnosticStatusWrapper&
       status);
-    /// Diagnose the navigation status
-    void diagnoseNavStatus(diagnostic_updater::DiagnosticStatusWrapper& status);
+    /// Diagnose the navigation status for primary GPS
+    void diagnoseNavStatusPrimary(diagnostic_updater::DiagnosticStatusWrapper&
+      status);
+    /// Diagnose the navigation status for secondary GPS
+    void diagnoseNavStatusSecondary(
+      diagnostic_updater::DiagnosticStatusWrapper& status);
     /// Diagnose the alignment status
     void diagnoseAlignStatus(diagnostic_updater::DiagnosticStatusWrapper&
       status);
@@ -141,8 +145,10 @@ namespace poslv {
     double _dmiMaxFreq;
     /// Alignement status
     uint8_t _alignStatus;
-    /// Navigation solution status
-    int8_t _navStatus;
+    /// Navigation solution status for primary GPS
+    int8_t _navStatus1;
+    /// Navigation solution status for secondary GPS
+    int8_t _navStatus2;
     /// Queue depth
     int _queueDepth;
     /** @}

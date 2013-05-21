@@ -26,6 +26,7 @@
 #include <libposlv/types/VehicleNavigationPerformance.h>
 #include <libposlv/types/TimeTaggedDMIData.h>
 #include <libposlv/types/PrimaryGPSStatus.h>
+#include <libposlv/types/SecondaryGPSStatus.h>
 #include <libposlv/com/TCPConnectionClient.h>
 #include <libposlv/sensor/POSLVComTCP.h>
 #include <libposlv/exceptions/IOException.h>
@@ -47,7 +48,8 @@ namespace poslv {
   PosLvNode::PosLvNode(const ros::NodeHandle& nh) :
       _nodeHandle(nh),
       _alignStatus(8),
-      _navStatus(-1) {
+      _navStatus1(-1),
+      _navStatus2(-1) {
     getParameters();
     _vehicleNavigationSolutionPublisher =
       _nodeHandle.advertise<poslv::VehicleNavigationSolutionMsg>(
@@ -61,7 +63,10 @@ namespace poslv {
     _updater.setHardwareID("none");
     _updater.add("TCP connection", this, &PosLvNode::diagnoseTCPConnection);
     _updater.add("Alignement status", this, &PosLvNode::diagnoseAlignStatus);
-    _updater.add("Navigation status", this, &PosLvNode::diagnoseNavStatus);
+    _updater.add("Navigation status (primary GPS)", this,
+      &PosLvNode::diagnoseNavStatusPrimary);
+    _updater.add("Navigation status (secondary GPS)", this,
+      &PosLvNode::diagnoseNavStatusSecondary);
     _vnsFreq.reset(new diagnostic_updater::HeaderlessTopicDiagnostic(
       "vehicle_navigation_solution", _updater,
       diagnostic_updater::FrequencyStatusParam(&_vnsMinFreq, &_vnsMaxFreq,
@@ -223,9 +228,57 @@ namespace poslv {
     }
   }
 
-  void PosLvNode::diagnoseNavStatus(
+  void PosLvNode::diagnoseNavStatusPrimary(
       diagnostic_updater::DiagnosticStatusWrapper& status) {
-    switch (_navStatus) {
+    switch (_navStatus1) {
+      case -1:
+        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
+          "Unkown");
+        break;
+      case 0:
+        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
+          "No data from receiver");
+        break;
+      case 1:
+        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
+          "Horizontal C/A mode");
+        break;
+      case 2:
+        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
+          "3-dimension C/A mode");
+        break;
+      case 3:
+        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
+          "Horizontal DGPS mode");
+        break;
+      case 4:
+        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
+          "3-dimension DGPS mode");
+        break;
+      case 5:
+        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
+          "Float RTK mode");
+        break;
+      case 6:
+        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
+          "Integer wide lane RTK mode");
+        break;
+      case 7:
+        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
+          "Integer narrow lane RTK mode");
+        break;
+      case 8:
+        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
+          "P-Code");
+        break;
+      default:
+        break;
+    }
+  }
+
+  void PosLvNode::diagnoseNavStatusSecondary(
+      diagnostic_updater::DiagnosticStatusWrapper& status) {
+    switch (_navStatus2) {
       case -1:
         status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
           "Unkown");
@@ -296,7 +349,11 @@ namespace poslv {
         }
         else if (group.instanceOf<PrimaryGPSStatus>()) {
           const PrimaryGPSStatus& gps = group.typeCast<PrimaryGPSStatus>();
-          _navStatus = gps.mNavigationSolutionStatus;
+          _navStatus1 = gps.mNavigationSolutionStatus;
+        }
+        else if (group.instanceOf<SecondaryGPSStatus>()) {
+          const SecondaryGPSStatus& gps = group.typeCast<SecondaryGPSStatus>();
+          _navStatus2 = gps.mNavigationSolutionStatus;
         }
       } 
       catch (const IOException& e) {

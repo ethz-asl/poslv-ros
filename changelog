@@ -1,3 +1,9 @@
+poslv-ros (0.1-19) precise; urgency=low
+
+  * adding secondary GPS status 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 21 May 2013 14:04:50 +0000
+
 poslv-ros (0.1-18) precise; urgency=low
 
   * porting to remake (corrected changelog)
