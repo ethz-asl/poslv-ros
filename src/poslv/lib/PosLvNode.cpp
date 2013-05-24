@@ -60,7 +60,7 @@ namespace poslv {
     _timeTaggedDMIDataPublisher =
       _nodeHandle.advertise<poslv::TimeTaggedDMIDataMsg>(
       "time_tagged_dmi_data", _queueDepth);
-    _updater.setHardwareID("none");
+    _updater.setHardwareID("POS LV 220");
     _updater.add("TCP connection", this, &PosLvNode::diagnoseTCPConnection);
     _updater.add("Alignement status", this, &PosLvNode::diagnoseAlignStatus);
     _updater.add("Navigation status (primary GPS)", this,
