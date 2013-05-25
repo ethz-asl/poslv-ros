@@ -151,6 +151,12 @@ namespace poslv {
     int8_t _navStatus2;
     /// Queue depth
     int _queueDepth;
+    /// Vehicle navigation solution packet counter
+    long _vnsPacketCounter;
+    /// Vehicle navigation performance packet counter
+    long _vnpPacketCounter;
+    /// DMI packet counter
+    long _dmiPacketCounter;
     /** @}
       */
 

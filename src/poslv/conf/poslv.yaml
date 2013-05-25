@@ -3,12 +3,12 @@ connection:
   device_port: 5602
   retry_timeout: 1.0
 diagnostics:
-  vns_min_freq: 1.0
-  vns_max_freq: 200.0
-  vnp_min_freq: 0.5
-  vnp_max_freq: 1.0
-  dmi_min_freq: 1.0
-  dmi_max_freq: 200.0
+  vns_min_freq: 80.0
+  vns_max_freq: 120.0
+  vnp_min_freq: 0.8
+  vnp_max_freq: 1.2
+  dmi_min_freq: 160.0
+  dmi_max_freq: 240.0
 ros:
   queue_depth: 100
   frame_id: "vehicle_base_link"

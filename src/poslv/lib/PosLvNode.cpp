@@ -49,7 +49,10 @@ namespace poslv {
       _nodeHandle(nh),
       _alignStatus(8),
       _navStatus1(-1),
-      _navStatus2(-1) {
+      _navStatus2(-1),
+      _vnsPacketCounter(0),
+      _vnpPacketCounter(0),
+      _dmiPacketCounter(0) {
     getParameters();
     _vehicleNavigationSolutionPublisher =
       _nodeHandle.advertise<poslv::VehicleNavigationSolutionMsg>(
@@ -95,6 +98,7 @@ namespace poslv {
       new poslv::VehicleNavigationSolutionMsg);
     vnsMsg->header.stamp = timestamp;
     vnsMsg->header.frame_id = _frameId;
+    vnsMsg->header.seq = _vnsPacketCounter++;
     vnsMsg->TimeDistance.Time1 = vns.mTimeDistance.mTime1;
     vnsMsg->TimeDistance.Time2 = vns.mTimeDistance.mTime2;
     vnsMsg->TimeDistance.DistanceTag = vns.mTimeDistance.mDistanceTag;
@@ -130,6 +134,7 @@ namespace poslv {
       new poslv::VehicleNavigationPerformanceMsg);
     vnpMsg->header.stamp = timestamp;
     vnpMsg->header.frame_id = _frameId;
+    vnpMsg->header.seq = _vnpPacketCounter++;
     vnpMsg->TimeDistance.Time1 = vnp.mTimeDistance.mTime1;
     vnpMsg->TimeDistance.Time2 = vnp.mTimeDistance.mTime2;
     vnpMsg->TimeDistance.DistanceTag = vnp.mTimeDistance.mDistanceTag;
@@ -157,6 +162,7 @@ namespace poslv {
       new poslv::TimeTaggedDMIDataMsg);
     dmiMsg->header.stamp = timestamp;
     dmiMsg->header.frame_id = _frameId;
+    dmiMsg->header.seq = _dmiPacketCounter++;
     dmiMsg->TimeDistance.Time1 = dmi.mTimeDistance.mTime1;
     dmiMsg->TimeDistance.Time2 = dmi.mTimeDistance.mTime2;
     dmiMsg->TimeDistance.DistanceTag = dmi.mTimeDistance.mDistanceTag;
@@ -181,7 +187,7 @@ namespace poslv {
         _tcpConnection->getPort());
     else
      status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-      "TCP connection closed.");
+      "TCP connection closed on %s:%d.", _deviceIpStr.c_str(), _devicePort);
   }
 
   void PosLvNode::diagnoseAlignStatus(
@@ -379,12 +385,12 @@ namespace poslv {
       "129.132.39.171");
     _nodeHandle.param<int>("connection/device_port", _devicePort, 5602);
     _nodeHandle.param<double>("connection/retry_timeout", _retryTimeout, 1);
-    _nodeHandle.param<double>("diagnostics/vns_min_freq", _vnsMinFreq, 1);
-    _nodeHandle.param<double>("diagnostics/vns_max_freq", _vnsMaxFreq, 200);
-    _nodeHandle.param<double>("diagnostics/vnp_min_freq", _vnpMinFreq, 0.5);
-    _nodeHandle.param<double>("diagnostics/vnp_max_freq", _vnpMaxFreq, 1);
-    _nodeHandle.param<double>("diagnostics/dmi_min_freq", _dmiMinFreq, 1);
-    _nodeHandle.param<double>("diagnostics/dmi_max_freq", _dmiMaxFreq, 200);
+    _nodeHandle.param<double>("diagnostics/vns_min_freq", _vnsMinFreq, 80);
+    _nodeHandle.param<double>("diagnostics/vns_max_freq", _vnsMaxFreq, 120);
+    _nodeHandle.param<double>("diagnostics/vnp_min_freq", _vnpMinFreq, 0.8);
+    _nodeHandle.param<double>("diagnostics/vnp_max_freq", _vnpMaxFreq, 1.2);
+    _nodeHandle.param<double>("diagnostics/dmi_min_freq", _dmiMinFreq, 160);
+    _nodeHandle.param<double>("diagnostics/dmi_max_freq", _dmiMaxFreq, 220);
   }
 
 }

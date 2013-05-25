@@ -1,3 +1,9 @@
+poslv-ros (0.1-21) precise; urgency=low
+
+  * update frequency, packet counters, diagnostics
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Sat, 25 May 2013 10:47:10 +0000
+
 poslv-ros (0.1-20) precise; urgency=low
 
   * change hardware ID for diagnostics 
