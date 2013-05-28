@@ -1,3 +1,9 @@
+poslv-ros (0.1-24) precise; urgency=low
+
+  * distribution on PPA 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 28 May 2013 18:40:06 +0000
+
 poslv-ros (0.1-23) precise; urgency=low
 
   * catching object factory exception
