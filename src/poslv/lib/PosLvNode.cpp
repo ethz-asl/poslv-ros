@@ -31,6 +31,7 @@
 #include <libposlv/sensor/POSLVComTCP.h>
 #include <libposlv/exceptions/IOException.h>
 #include <libposlv/exceptions/SystemException.h>
+#include <libposlv/exceptions/TypeCreationException.h>
 #include <libposlv/base/Timer.h>
 #include <libposlv/types/Packet.h>
 #include <libposlv/types/Group.h>
@@ -367,10 +368,12 @@ namespace poslv {
         ROS_WARN_STREAM("Retrying in " << _retryTimeout << " [s]");
         timer.sleep(_retryTimeout);
       }
-      catch (SystemException& e) {
+      catch (const SystemException& e) {
         ROS_WARN_STREAM("SystemException: " << e.what());
         ROS_WARN_STREAM("Retrying in " << _retryTimeout << " [s]");
         timer.sleep(_retryTimeout);
+      }
+      catch (const TypeCreationException<unsigned short>& e) {
       }
       _updater.update();
       ros::spinOnce();
