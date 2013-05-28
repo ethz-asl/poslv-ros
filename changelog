@@ -1,3 +1,9 @@
+poslv-ros (0.1-22) precise; urgency=low
+
+  * changing library name 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 28 May 2013 09:14:50 +0000
+
 poslv-ros (0.1-21) precise; urgency=low
 
   * update frequency, packet counters, diagnostics
