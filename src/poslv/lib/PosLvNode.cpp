@@ -181,7 +181,7 @@ namespace poslv {
 
   void PosLvNode::diagnoseTCPConnection(
       diagnostic_updater::DiagnosticStatusWrapper& status) {
-    if (_tcpConnection != nullptr && _tcpConnection->isOpen())
+    if (_tcpConnection && _tcpConnection->isOpen())
       status.summaryf(diagnostic_msgs::DiagnosticStatus::OK,
         "TCP connection opened on %s:%d.",
         _tcpConnection->getServerIP().c_str(),
