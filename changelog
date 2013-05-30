@@ -1,3 +1,9 @@
+poslv-ros (0.1-28) precise; urgency=low
+
+  * make the node respawn 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Thu, 30 May 2013 17:55:50 +0000
+
 poslv-ros (0.1-27) precise; urgency=low
 
   * update of remake for mixing ROS distributions 
