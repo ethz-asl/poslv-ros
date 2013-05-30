@@ -1,3 +1,9 @@
+poslv-ros (0.1-27) precise; urgency=low
+
+  * update of remake for mixing ROS distributions 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Thu, 30 May 2013 13:46:42 +0000
+
 poslv-ros (0.1-26) precise; urgency=low
 
   * removing nullptr
