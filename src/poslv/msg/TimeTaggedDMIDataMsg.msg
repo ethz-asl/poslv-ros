@@ -1,15 +1,8 @@
 Header header
-# TimeDistance mTimeDistance
-poslv/TimeDistanceMsg TimeDistance
-# /// Signed distance traveled
-float64 SignedDistanceTraveled
-# /// Unsigned distance traveled
-float64 UnsignedDistanceTraveled
-# /// DMI scale factor
-uint16 DMIScaleFactor
-# /// Data status
-uint8 DataStatus
-# /// DMI type
-uint8 DMIType
-#/// DMI data rate
-uint8 DMIDataRate
+poslv/TimeDistanceMsg timeDistance
+float64 signedDistanceTraveled
+float64 unsignedDistanceTraveled
+uint16 dmiScaleFactor
+uint8 dataStatus
+uint8 dmiType
+uint8 dmiDataRate

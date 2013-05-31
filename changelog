@@ -1,3 +1,9 @@
+poslv-ros (0.1-29) precise; urgency=low
+
+  * changing message members name 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Fri, 31 May 2013 15:21:07 +0000
+
 poslv-ros (0.1-28) precise; urgency=low
 
   * make the node respawn 
