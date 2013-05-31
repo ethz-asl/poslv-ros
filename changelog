@@ -1,3 +1,9 @@
+poslv-ros (0.1-30) precise; urgency=low
+
+  * adding check of inter packet time 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Fri, 31 May 2013 16:18:36 +0000
+
 poslv-ros (0.1-29) precise; urgency=low
 
   * changing message members name 

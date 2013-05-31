@@ -53,7 +53,13 @@ namespace poslv {
       _navStatus2(-1),
       _vnsPacketCounter(0),
       _vnpPacketCounter(0),
-      _dmiPacketCounter(0) {
+      _dmiPacketCounter(0),
+      _lastVnsTimestamp(0),
+      _lastInterVnsTime(0),
+      _lastVnpTimestamp(0),
+      _lastInterVnpTime(0),
+      _lastDmiTimestamp(0),
+      _lastInterDmiTime(0) {
     getParameters();
     _vehicleNavigationSolutionPublisher =
       _nodeHandle.advertise<poslv::VehicleNavigationSolutionMsg>(
@@ -181,11 +187,18 @@ namespace poslv {
 
   void PosLvNode::diagnoseTCPConnection(
       diagnostic_updater::DiagnosticStatusWrapper& status) {
-    if (_tcpConnection && _tcpConnection->isOpen())
+    if (_tcpConnection && _tcpConnection->isOpen()) {
+      if (_lastInterVnsTime)
+        status.add("Inter VNS packet time [s]", _lastInterVnsTime);
+      if (_lastInterVnpTime)
+        status.add("Inter VNP packet time [s]", _lastInterVnpTime);
+      if (_lastInterDmiTime)
+        status.add("Inter DMI packet time [s]", _lastInterDmiTime);
       status.summaryf(diagnostic_msgs::DiagnosticStatus::OK,
         "TCP connection opened on %s:%d.",
         _tcpConnection->getServerIP().c_str(),
         _tcpConnection->getPort());
+    }
     else
      status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
       "TCP connection closed on %s:%d.", _deviceIpStr.c_str(), _devicePort);
@@ -344,15 +357,24 @@ namespace poslv {
           const VehicleNavigationSolution& vns =
             group.typeCast<VehicleNavigationSolution>();
           publishVehicleNavigationSolution(timestamp, vns);
+          if (_lastVnsTimestamp)
+            _lastInterVnsTime = vns.mTimeDistance.mTime2 - _lastVnsTimestamp;
+          _lastVnsTimestamp = vns.mTimeDistance.mTime2;
         }
         else if (group.instanceOf<VehicleNavigationPerformance>()) {
           const VehicleNavigationPerformance& vnp =
             group.typeCast<VehicleNavigationPerformance>();
           publishVehicleNavigationPerformance(timestamp, vnp);
+          if (_lastVnpTimestamp)
+            _lastInterVnpTime = vnp.mTimeDistance.mTime2 - _lastVnpTimestamp;
+          _lastVnpTimestamp = vnp.mTimeDistance.mTime2;
         }
         else if (group.instanceOf<TimeTaggedDMIData>()) {
           const TimeTaggedDMIData& dmi = group.typeCast<TimeTaggedDMIData>();
           publishTimeTaggedDMIData(timestamp, dmi);
+          if (_lastDmiTimestamp)
+            _lastInterDmiTime = dmi.mTimeDistance.mTime2 - _lastDmiTimestamp;
+          _lastDmiTimestamp = dmi.mTimeDistance.mTime2;
         }
         else if (group.instanceOf<PrimaryGPSStatus>()) {
           const PrimaryGPSStatus& gps = group.typeCast<PrimaryGPSStatus>();
@@ -362,7 +384,7 @@ namespace poslv {
           const SecondaryGPSStatus& gps = group.typeCast<SecondaryGPSStatus>();
           _navStatus2 = gps.mNavigationSolutionStatus;
         }
-      } 
+      }
       catch (const IOException& e) {
         ROS_WARN_STREAM("IOException: " << e.what());
         ROS_WARN_STREAM("Retrying in " << _retryTimeout << " [s]");

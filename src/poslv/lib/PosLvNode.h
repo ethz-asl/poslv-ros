@@ -157,6 +157,18 @@ namespace poslv {
     long _vnpPacketCounter;
     /// DMI packet counter
     long _dmiPacketCounter;
+    /// Last vns timestamp
+    double _lastVnsTimestamp;
+    /// Last inter-vns time
+    double _lastInterVnsTime;
+    /// Last vnp timestamp
+    double _lastVnpTimestamp;
+    /// Last inter-vnp time
+    double _lastInterVnpTime;
+    /// Last dmi timestamp
+    double _lastDmiTimestamp;
+    /// Last inter-dmi time
+    double _lastInterDmiTime;
     /** @}
       */
 
