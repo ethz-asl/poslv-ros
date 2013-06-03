@@ -352,37 +352,40 @@ namespace poslv {
       try {
         std::shared_ptr<Packet> packet = device.readPacket();
         const ros::Time timestamp = ros::Time::now();
-        const Group& group = packet->groupCast();
-        if (group.instanceOf<VehicleNavigationSolution>()) {
-          const VehicleNavigationSolution& vns =
-            group.typeCast<VehicleNavigationSolution>();
-          publishVehicleNavigationSolution(timestamp, vns);
-          if (_lastVnsTimestamp)
-            _lastInterVnsTime = vns.mTimeDistance.mTime2 - _lastVnsTimestamp;
-          _lastVnsTimestamp = vns.mTimeDistance.mTime2;
-        }
-        else if (group.instanceOf<VehicleNavigationPerformance>()) {
-          const VehicleNavigationPerformance& vnp =
-            group.typeCast<VehicleNavigationPerformance>();
-          publishVehicleNavigationPerformance(timestamp, vnp);
-          if (_lastVnpTimestamp)
-            _lastInterVnpTime = vnp.mTimeDistance.mTime2 - _lastVnpTimestamp;
-          _lastVnpTimestamp = vnp.mTimeDistance.mTime2;
-        }
-        else if (group.instanceOf<TimeTaggedDMIData>()) {
-          const TimeTaggedDMIData& dmi = group.typeCast<TimeTaggedDMIData>();
-          publishTimeTaggedDMIData(timestamp, dmi);
-          if (_lastDmiTimestamp)
-            _lastInterDmiTime = dmi.mTimeDistance.mTime2 - _lastDmiTimestamp;
-          _lastDmiTimestamp = dmi.mTimeDistance.mTime2;
-        }
-        else if (group.instanceOf<PrimaryGPSStatus>()) {
-          const PrimaryGPSStatus& gps = group.typeCast<PrimaryGPSStatus>();
-          _navStatus1 = gps.mNavigationSolutionStatus;
-        }
-        else if (group.instanceOf<SecondaryGPSStatus>()) {
-          const SecondaryGPSStatus& gps = group.typeCast<SecondaryGPSStatus>();
-          _navStatus2 = gps.mNavigationSolutionStatus;
+        if (packet->instanceOfGroup()) {
+          const Group& group = packet->groupCast();
+          if (group.instanceOf<VehicleNavigationSolution>()) {
+            const VehicleNavigationSolution& vns =
+              group.typeCast<VehicleNavigationSolution>();
+            publishVehicleNavigationSolution(timestamp, vns);
+            if (_lastVnsTimestamp)
+              _lastInterVnsTime = vns.mTimeDistance.mTime2 - _lastVnsTimestamp;
+            _lastVnsTimestamp = vns.mTimeDistance.mTime2;
+          }
+          else if (group.instanceOf<VehicleNavigationPerformance>()) {
+            const VehicleNavigationPerformance& vnp =
+              group.typeCast<VehicleNavigationPerformance>();
+            publishVehicleNavigationPerformance(timestamp, vnp);
+            if (_lastVnpTimestamp)
+              _lastInterVnpTime = vnp.mTimeDistance.mTime2 - _lastVnpTimestamp;
+            _lastVnpTimestamp = vnp.mTimeDistance.mTime2;
+          }
+          else if (group.instanceOf<TimeTaggedDMIData>()) {
+            const TimeTaggedDMIData& dmi = group.typeCast<TimeTaggedDMIData>();
+            publishTimeTaggedDMIData(timestamp, dmi);
+            if (_lastDmiTimestamp)
+              _lastInterDmiTime = dmi.mTimeDistance.mTime2 - _lastDmiTimestamp;
+            _lastDmiTimestamp = dmi.mTimeDistance.mTime2;
+          }
+          else if (group.instanceOf<PrimaryGPSStatus>()) {
+            const PrimaryGPSStatus& gps = group.typeCast<PrimaryGPSStatus>();
+            _navStatus1 = gps.mNavigationSolutionStatus;
+          }
+          else if (group.instanceOf<SecondaryGPSStatus>()) {
+            const SecondaryGPSStatus& gps =
+              group.typeCast<SecondaryGPSStatus>();
+            _navStatus2 = gps.mNavigationSolutionStatus;
+          }
         }
       }
       catch (const IOException& e) {
@@ -414,8 +417,8 @@ namespace poslv {
     _nodeHandle.param<double>("diagnostics/vns_max_freq", _vnsMaxFreq, 120);
     _nodeHandle.param<double>("diagnostics/vnp_min_freq", _vnpMinFreq, 0.8);
     _nodeHandle.param<double>("diagnostics/vnp_max_freq", _vnpMaxFreq, 1.2);
-    _nodeHandle.param<double>("diagnostics/dmi_min_freq", _dmiMinFreq, 160);
-    _nodeHandle.param<double>("diagnostics/dmi_max_freq", _dmiMaxFreq, 220);
+    _nodeHandle.param<double>("diagnostics/dmi_min_freq", _dmiMinFreq, 80);
+    _nodeHandle.param<double>("diagnostics/dmi_max_freq", _dmiMaxFreq, 120);
   }
 
 }

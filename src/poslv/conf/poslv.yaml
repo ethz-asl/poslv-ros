@@ -7,8 +7,8 @@ diagnostics:
   vns_max_freq: 120.0
   vnp_min_freq: 0.8
   vnp_max_freq: 1.2
-  dmi_min_freq: 160.0
-  dmi_max_freq: 240.0
+  dmi_min_freq: 80.0
+  dmi_max_freq: 120.0
 ros:
   queue_depth: 100
   frame_id: "vehicle_base_link"

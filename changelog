@@ -1,3 +1,10 @@
+poslv-ros (0.1-31) precise; urgency=low
+
+  * bug discovered on field, missing exception handler
+    frequency for DMI too high 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Mon, 03 Jun 2013 11:50:26 +0000
+
 poslv-ros (0.1-30) precise; urgency=low
 
   * adding check of inter packet time 
