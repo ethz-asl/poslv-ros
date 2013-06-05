@@ -1,3 +1,9 @@
+poslv-ros (0.1-32) precise; urgency=low
+
+  * changing frame_id 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Wed, 05 Jun 2013 17:34:31 +0000
+
 poslv-ros (0.1-31) precise; urgency=low
 
   * bug discovered on field, missing exception handler

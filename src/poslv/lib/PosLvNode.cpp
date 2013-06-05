@@ -407,7 +407,7 @@ namespace poslv {
 
   void PosLvNode::getParameters() {
     _nodeHandle.param<std::string>("ros/frame_id", _frameId,
-      "vehicle_base_link");
+      "/poslv_link");
     _nodeHandle.param<int>("ros/queue_depth", _queueDepth, 100);
     _nodeHandle.param<std::string>("connection/device_ip", _deviceIpStr,
       "129.132.39.171");
