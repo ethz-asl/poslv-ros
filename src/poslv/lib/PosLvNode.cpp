@@ -18,6 +18,8 @@
 
 #include "PosLvNode.h"
 
+#include <bitset>
+
 #include <diagnostic_updater/publisher.h>
 
 #include <boost/shared_ptr.hpp>
@@ -27,6 +29,9 @@
 #include <libposlv/types/TimeTaggedDMIData.h>
 #include <libposlv/types/PrimaryGPSStatus.h>
 #include <libposlv/types/SecondaryGPSStatus.h>
+#include <libposlv/types/GAMSSolutionStatus.h>
+#include <libposlv/types/IINSolutionStatus.h>
+#include <libposlv/types/GeneralStatusFDIR.h>
 #include <libposlv/com/TCPConnectionClient.h>
 #include <libposlv/sensor/POSLVComTCP.h>
 #include <libposlv/exceptions/IOException.h>
@@ -59,7 +64,51 @@ namespace poslv {
       _lastVnpTimestamp(0),
       _lastInterVnpTime(0),
       _lastDmiTimestamp(0),
-      _lastInterDmiTime(0) {
+      _lastInterDmiTime(0),
+      _gamsStatus(7),
+      _iinStatus(8),
+      _generalStatusA(0),
+      _generalStatusB(0),
+      _generalStatusC(0),
+      _fdirLevel1Status(0),
+      _fdirLevel2Status(0),
+      _fdirLevel4Status(0),
+      _fdirLevel5Status(0) {
+    _gpsStatusMsgs[-1] = "Unknown";
+    _gpsStatusMsgs[0] = "No data from receiver";
+    _gpsStatusMsgs[1] = "Horizontal C/A mode";
+    _gpsStatusMsgs[2] = "3-dimension C/A mode";
+    _gpsStatusMsgs[3] = "Horizontal DGPS mode";
+    _gpsStatusMsgs[4] = "3-dimension DGPS mode";
+    _gpsStatusMsgs[5] = "Float RTK mode";
+    _gpsStatusMsgs[6] = "Integer wide lane RTK mode";
+    _gpsStatusMsgs[7] = "Integer narrow lane RTK mode";
+    _gpsStatusMsgs[8] = "P-code";
+    _alignStatusMsgs[0] = "Full navigation";
+    _alignStatusMsgs[1] = "Fine alignment active";
+    _alignStatusMsgs[2] = "GC CHI 2";
+    _alignStatusMsgs[3] = "PC CHI 2";
+    _alignStatusMsgs[4] = "GC CHI 1";
+    _alignStatusMsgs[5] = "PC CHI 1";
+    _alignStatusMsgs[6] = "Coarse leveling active";
+    _alignStatusMsgs[7] = "Initial solution assigned";
+    _alignStatusMsgs[8] = "No valid solution";
+    _gamsStatusMsgs[0] = "Fixed integer";
+    _gamsStatusMsgs[1] = "Fixed integer test install data";
+    _gamsStatusMsgs[2] = "Degraded fixed integer";
+    _gamsStatusMsgs[3] = "Floated ambiguity";
+    _gamsStatusMsgs[4] = "Degraded floated ambiguity";
+    _gamsStatusMsgs[5] = "Solution without install data";
+    _gamsStatusMsgs[6] = "Solution from navigator attitude and install data";
+    _gamsStatusMsgs[7] = "No solution";
+    _iinStatusMsgs[1] = "Fixed narrow lane RTK";
+    _iinStatusMsgs[2] = "Fixed wide lane RTK";
+    _iinStatusMsgs[3] = "Float RTK";
+    _iinStatusMsgs[4] = "Code DGPS";
+    _iinStatusMsgs[5] = "RTCM DGPS";
+    _iinStatusMsgs[6] = "Autonmous (C/A)";
+    _iinStatusMsgs[7] = "GPS navigation solution";
+    _iinStatusMsgs[8] = "No solution";
     getParameters();
     _vehicleNavigationSolutionPublisher =
       _nodeHandle.advertise<poslv::VehicleNavigationSolutionMsg>(
@@ -72,11 +121,7 @@ namespace poslv {
       "time_tagged_dmi_data", _queueDepth);
     _updater.setHardwareID("POS LV 220");
     _updater.add("TCP connection", this, &PosLvNode::diagnoseTCPConnection);
-    _updater.add("Alignement status", this, &PosLvNode::diagnoseAlignStatus);
-    _updater.add("Navigation status (primary GPS)", this,
-      &PosLvNode::diagnoseNavStatusPrimary);
-    _updater.add("Navigation status (secondary GPS)", this,
-      &PosLvNode::diagnoseNavStatusSecondary);
+    _updater.add("System status", this, &PosLvNode::diagnoseSystemStatus);
     _vnsFreq.reset(new diagnostic_updater::HeaderlessTopicDiagnostic(
       "vehicle_navigation_solution", _updater,
       diagnostic_updater::FrequencyStatusParam(&_vnsMinFreq, &_vnsMaxFreq,
@@ -131,7 +176,6 @@ namespace poslv {
     vnsMsg->accDown = vns.mAccDown;
     vnsMsg->alignementStatus = vns.mAlignementStatus;
     _vehicleNavigationSolutionPublisher.publish(vnsMsg);
-    _alignStatus = vns.mAlignementStatus;
     _vnsFreq->tick();
   }
 
@@ -204,144 +248,20 @@ namespace poslv {
       "TCP connection closed on %s:%d.", _deviceIpStr.c_str(), _devicePort);
   }
 
-  void PosLvNode::diagnoseAlignStatus(
+  void PosLvNode::diagnoseSystemStatus(
       diagnostic_updater::DiagnosticStatusWrapper& status) {
-    switch (_alignStatus) {
-      case 0:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::OK,
-          "Full navigation");
-        break;
-      case 1:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Fine alignment is active");
-        break;
-      case 2:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "GC CHI 2");
-        break;
-      case 3:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "PC CHI 2");
-        break;
-      case 4:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "GC CHI 1");
-        break;
-      case 5:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "PC CHI 1");
-        break;
-      case 6:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Coarse leveling is active");
-        break;
-      case 7:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Initial solution assigned");
-        break;
-      case 8:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "No valid solution");
-        break;
-      default:
-        break;
-    }
-  }
-
-  void PosLvNode::diagnoseNavStatusPrimary(
-      diagnostic_updater::DiagnosticStatusWrapper& status) {
-    switch (_navStatus1) {
-      case -1:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "Unkown");
-        break;
-      case 0:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "No data from receiver");
-        break;
-      case 1:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Horizontal C/A mode");
-        break;
-      case 2:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "3-dimension C/A mode");
-        break;
-      case 3:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Horizontal DGPS mode");
-        break;
-      case 4:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "3-dimension DGPS mode");
-        break;
-      case 5:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Float RTK mode");
-        break;
-      case 6:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Integer wide lane RTK mode");
-        break;
-      case 7:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "Integer narrow lane RTK mode");
-        break;
-      case 8:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "P-Code");
-        break;
-      default:
-        break;
-    }
-  }
-
-  void PosLvNode::diagnoseNavStatusSecondary(
-      diagnostic_updater::DiagnosticStatusWrapper& status) {
-    switch (_navStatus2) {
-      case -1:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "Unkown");
-        break;
-      case 0:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "No data from receiver");
-        break;
-      case 1:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Horizontal C/A mode");
-        break;
-      case 2:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "3-dimension C/A mode");
-        break;
-      case 3:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Horizontal DGPS mode");
-        break;
-      case 4:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "3-dimension DGPS mode");
-        break;
-      case 5:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Float RTK mode");
-        break;
-      case 6:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Integer wide lane RTK mode");
-        break;
-      case 7:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "Integer narrow lane RTK mode");
-        break;
-      case 8:
-        status.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "P-Code");
-        break;
-      default:
-        break;
-    }
+    status.add("Alignment status", _alignStatusMsgs[_alignStatus]);
+    status.add("Primary GPS status", _gpsStatusMsgs[_navStatus1]);
+    status.add("Secondary GPS status", _gpsStatusMsgs[_navStatus2]);
+    status.add("GAMS solution status", _gamsStatusMsgs[_gamsStatus]);
+    status.add("IIN processing status", _iinStatusMsgs[_iinStatus]);
+    std::bitset<32> statusA(_generalStatusA);
+    if (statusA.test(7))
+      status.summaryf(diagnostic_msgs::DiagnosticStatus::OK,
+        "Full navigation solution");
+    else
+      status.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
+        "Incomplete navigation solution");
   }
 
   void PosLvNode::spin() {
@@ -361,6 +281,7 @@ namespace poslv {
             if (_lastVnsTimestamp)
               _lastInterVnsTime = vns.mTimeDistance.mTime2 - _lastVnsTimestamp;
             _lastVnsTimestamp = vns.mTimeDistance.mTime2;
+            _alignStatus = vns.mAlignementStatus;
           }
           else if (group.instanceOf<VehicleNavigationPerformance>()) {
             const VehicleNavigationPerformance& vnp =
@@ -385,6 +306,27 @@ namespace poslv {
             const SecondaryGPSStatus& gps =
               group.typeCast<SecondaryGPSStatus>();
             _navStatus2 = gps.mNavigationSolutionStatus;
+          }
+          else if (group.instanceOf<GAMSSolutionStatus>()) {
+            const GAMSSolutionStatus& gams =
+              group.typeCast<GAMSSolutionStatus>();
+            _gamsStatus = gams.mSolutionStatus;
+          }
+          else if (group.instanceOf<IINSolutionStatus>()) {
+            const IINSolutionStatus& iin =
+              group.typeCast<IINSolutionStatus>();
+            _iinStatus = iin.mIINProcessingStatus;
+          }
+          else if (group.instanceOf<GeneralStatusFDIR>()) {
+            const GeneralStatusFDIR& stat =
+              group.typeCast<GeneralStatusFDIR>();
+            _generalStatusA = stat.mGeneralStatusA;
+            _generalStatusB = stat.mGeneralStatusB;
+            _generalStatusC = stat.mGeneralStatusC;
+            _fdirLevel1Status = stat.mFDIRLevel1Status;
+            _fdirLevel2Status = stat.mFDIRLevel2Status;
+            _fdirLevel4Status = stat.mFDIRLevel4Status;
+            _fdirLevel5Status = stat.mFDIRLevel5Status;
           }
         }
       }

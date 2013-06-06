@@ -26,6 +26,7 @@
 
 #include <string>
 #include <memory>
+#include <unordered_map>
 
 #include <ros/ros.h>
 #include <diagnostic_updater/diagnostic_updater.h>
@@ -88,14 +89,8 @@ namespace poslv {
     /// Diagnose the TCP connection
     void diagnoseTCPConnection(diagnostic_updater::DiagnosticStatusWrapper&
       status);
-    /// Diagnose the navigation status for primary GPS
-    void diagnoseNavStatusPrimary(diagnostic_updater::DiagnosticStatusWrapper&
-      status);
-    /// Diagnose the navigation status for secondary GPS
-    void diagnoseNavStatusSecondary(
-      diagnostic_updater::DiagnosticStatusWrapper& status);
-    /// Diagnose the alignment status
-    void diagnoseAlignStatus(diagnostic_updater::DiagnosticStatusWrapper&
+    /// Diagnose system status
+    void diagnoseSystemStatus(diagnostic_updater::DiagnosticStatusWrapper&
       status);
     /// Retrieves parameters
     void getParameters();
@@ -169,6 +164,32 @@ namespace poslv {
     double _lastDmiTimestamp;
     /// Last inter-dmi time
     double _lastInterDmiTime;
+    /// GAMS status
+    uint8_t _gamsStatus;
+    /// IIN status
+    uint8_t _iinStatus;
+    /// Mapping for the GPS status messages
+    std::unordered_map<int8_t, std::string> _gpsStatusMsgs;
+    /// Mapping for the alignment status messages
+    std::unordered_map<uint8_t, std::string> _alignStatusMsgs;
+    /// Mapping for the GAMS status messages
+    std::unordered_map<uint8_t, std::string> _gamsStatusMsgs;
+    /// Mapping for the IIN status messages
+    std::unordered_map<uint8_t, std::string> _iinStatusMsgs;
+    /// General status A
+    uint32_t _generalStatusA;
+    /// General status B
+    uint32_t _generalStatusB;
+    /// General status C
+    uint32_t _generalStatusC;
+    /// FDIR level 1 status
+    uint32_t _fdirLevel1Status;
+    /// FDIR level 2 status
+    uint16_t _fdirLevel2Status;
+    /// FDIR level 4 status
+    uint16_t _fdirLevel4Status;
+    /// FDIR level 5 status
+    uint16_t _fdirLevel5Status;
     /** @}
       */
 
