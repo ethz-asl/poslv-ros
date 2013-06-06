@@ -1,3 +1,9 @@
+poslv-ros (0.1-35) lucid; urgency=low
+
+  * more debugging
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Fri, 07 Jun 2013 00:22:49 +0200
+
 poslv-ros (0.1-34) lucid; urgency=low
 
   * more debugging output 

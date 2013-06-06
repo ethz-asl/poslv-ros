@@ -190,6 +190,24 @@ namespace poslv {
     uint16_t _fdirLevel4Status;
     /// FDIR level 5 status
     uint16_t _fdirLevel5Status;
+    /// Received CMR0 count
+    size_t _cmr0Count;
+    /// Received CMR1 count
+    size_t _cmr1Count;
+    /// Received CMR2 count
+    size_t _cmr2Count;
+    /// Received CMR94 count
+    size_t _cmr94Count;
+    /// Received RTCM1 count
+    size_t _rtcm1Count;
+    /// Received RTCM3 count
+    size_t _rtcm3Count;
+    /// Received RTCM9 count
+    size_t _rtcm9Count;
+    /// Received RTCM18 count
+    size_t _rtcm18Count;
+    /// Received RTCM19 count
+    size_t _rtcm19Count;
     /** @}
       */
 

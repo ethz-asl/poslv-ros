@@ -73,7 +73,16 @@ namespace poslv {
       _fdirLevel1Status(0),
       _fdirLevel2Status(0),
       _fdirLevel4Status(0),
-      _fdirLevel5Status(0) {
+      _fdirLevel5Status(0),
+      _cmr0Count(0),
+      _cmr1Count(0),
+      _cmr2Count(0),
+      _cmr94Count(0),
+      _rtcm1Count(0),
+      _rtcm3Count(0),
+      _rtcm9Count(0),
+      _rtcm18Count(0),
+      _rtcm19Count(0) {
     _gpsStatusMsgs[-1] = "Unknown";
     _gpsStatusMsgs[0] = "No data from receiver";
     _gpsStatusMsgs[1] = "Horizontal C/A mode";
@@ -255,6 +264,15 @@ namespace poslv {
     status.add("Secondary GPS status", _gpsStatusMsgs[_navStatus2]);
     status.add("GAMS solution status", _gamsStatusMsgs[_gamsStatus]);
     status.add("IIN processing status", _iinStatusMsgs[_iinStatus]);
+    status.add("RTCM 1 count", _rtcm1Count);
+    status.add("RTCM 3 count", _rtcm3Count);
+    status.add("RTCM 9 count", _rtcm9Count);
+    status.add("RTCM 18 count", _rtcm18Count);
+    status.add("RTCM 19 count", _rtcm19Count);
+    status.add("CMR 0 count", _cmr0Count);
+    status.add("CMR 1 count", _cmr1Count);
+    status.add("CMR 2 count", _cmr2Count);
+    status.add("CMR 94 count", _cmr94Count);
     std::bitset<32> statusA(_generalStatusA);
     if (statusA.test(7))
       status.summaryf(diagnostic_msgs::DiagnosticStatus::OK,
@@ -327,6 +345,25 @@ namespace poslv {
             _fdirLevel2Status = stat.mFDIRLevel2Status;
             _fdirLevel4Status = stat.mFDIRLevel4Status;
             _fdirLevel5Status = stat.mFDIRLevel5Status;
+            std::bitset<32> statusC(_generalStatusC);
+            if (statusC.test(18))
+              _rtcm1Count++;
+            if (statusC.test(19))
+              _rtcm3Count++;
+            if (statusC.test(20))
+              _rtcm9Count++;
+            if (statusC.test(21))
+              _rtcm18Count++;
+            if (statusC.test(22))
+              _rtcm19Count++;
+            if (statusC.test(23))
+              _cmr0Count++;
+            if (statusC.test(24))
+              _cmr1Count++;
+            if (statusC.test(25))
+              _cmr2Count++;
+            if (statusC.test(26))
+              _cmr94Count++;
           }
         }
       }
