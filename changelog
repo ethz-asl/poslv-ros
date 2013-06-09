@@ -1,3 +1,9 @@
+poslv-ros (0.1-36) precise; urgency=low
+
+  * security check for error codes 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Sun, 09 Jun 2013 15:56:22 +0000
+
 poslv-ros (0.1-35) lucid; urgency=low
 
   * more debugging

@@ -259,11 +259,16 @@ namespace poslv {
 
   void PosLvNode::diagnoseSystemStatus(
       diagnostic_updater::DiagnosticStatusWrapper& status) {
-    status.add("Alignment status", _alignStatusMsgs[_alignStatus]);
-    status.add("Primary GPS status", _gpsStatusMsgs[_navStatus1]);
-    status.add("Secondary GPS status", _gpsStatusMsgs[_navStatus2]);
-    status.add("GAMS solution status", _gamsStatusMsgs[_gamsStatus]);
-    status.add("IIN processing status", _iinStatusMsgs[_iinStatus]);
+    if (_alignStatusMsgs.count(_alignStatus))
+      status.add("Alignment status", _alignStatusMsgs[_alignStatus]);
+    if (_gpsStatusMsgs.count(_navStatus1))
+      status.add("Primary GPS status", _gpsStatusMsgs[_navStatus1]);
+    if (_gpsStatusMsgs.count(_navStatus2))
+      status.add("Secondary GPS status", _gpsStatusMsgs[_navStatus2]);
+    if (_gamsStatusMsgs.count(_gamsStatus))
+      status.add("GAMS solution status", _gamsStatusMsgs[_gamsStatus]);
+    if (_iinStatusMsgs.count(_iinStatus))
+      status.add("IIN processing status", _iinStatusMsgs[_iinStatus]);
     status.add("RTCM 1 count", _rtcm1Count);
     status.add("RTCM 3 count", _rtcm3Count);
     status.add("RTCM 9 count", _rtcm9Count);
