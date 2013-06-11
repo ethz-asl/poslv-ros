@@ -1,6 +1,7 @@
 connection:
   device_ip: "129.132.39.171"
   device_port: 5602
+  device_control_port: 5601
   retry_timeout: 1.0
 diagnostics:
   vns_min_freq: 80.0

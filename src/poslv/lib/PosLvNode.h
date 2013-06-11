@@ -31,6 +31,8 @@
 #include <ros/ros.h>
 #include <diagnostic_updater/diagnostic_updater.h>
 
+#include "poslv/SetDGPS.h"
+
 class VehicleNavigationSolution;
 class VehicleNavigationPerformance;
 class TimeTaggedDMIData;
@@ -94,6 +96,9 @@ namespace poslv {
       status);
     /// Retrieves parameters
     void getParameters();
+    /// Set DGPS service
+    bool setDgps(poslv::SetDGPS::Request& request, poslv::SetDGPS::Response&
+      response);
     /** @}
       */
 
@@ -108,6 +113,8 @@ namespace poslv {
     ros::Publisher _vehicleNavigationPerformancePublisher;
     /// Time-tagged DMI data publisher
     ros::Publisher _timeTaggedDMIDataPublisher;
+    /// Corrections protocol service
+    ros::ServiceServer _setDgpsService;
     /// Frame ID
     std::string _frameId;
     /// IP string
@@ -208,6 +215,8 @@ namespace poslv {
     size_t _rtcm18Count;
     /// Received RTCM19 count
     size_t _rtcm19Count;
+    /// Control port
+    int _deviceControlPort;
     /** @}
       */
 

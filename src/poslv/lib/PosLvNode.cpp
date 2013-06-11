@@ -32,12 +32,15 @@
 #include <libposlv/types/GAMSSolutionStatus.h>
 #include <libposlv/types/IINSolutionStatus.h>
 #include <libposlv/types/GeneralStatusFDIR.h>
+#include <libposlv/types/ProgramControl.h>
+#include <libposlv/types/BaseGPS1Setup.h>
 #include <libposlv/com/TCPConnectionClient.h>
 #include <libposlv/sensor/POSLVComTCP.h>
 #include <libposlv/exceptions/IOException.h>
 #include <libposlv/exceptions/SystemException.h>
 #include <libposlv/exceptions/TypeCreationException.h>
 #include <libposlv/base/Timer.h>
+#include <libposlv/base/Factory.h>
 #include <libposlv/types/Packet.h>
 #include <libposlv/types/Group.h>
 
@@ -128,6 +131,8 @@ namespace poslv {
     _timeTaggedDMIDataPublisher =
       _nodeHandle.advertise<poslv::TimeTaggedDMIDataMsg>(
       "time_tagged_dmi_data", _queueDepth);
+    _setDgpsService = _nodeHandle.advertiseService("set_dgps",
+      &PosLvNode::setDgps, this);
     _updater.setHardwareID("POS LV 220");
     _updater.add("TCP connection", this, &PosLvNode::diagnoseTCPConnection);
     _updater.add("System status", this, &PosLvNode::diagnoseSystemStatus);
@@ -152,6 +157,59 @@ namespace poslv {
 /******************************************************************************/
 /* Methods                                                                    */
 /******************************************************************************/
+
+  bool PosLvNode::setDgps(poslv::SetDGPS::Request& request,
+      poslv::SetDGPS::Response& response) {
+    static uint16_t transactionNumber = 0;
+    if (request.mode != "cmr" && request.mode != "rtcm1" &&
+        request.mode != "rtcm2") {
+      response.response = false;
+      response.message = "Unkown mode";
+    }
+    else {
+      TCPConnectionClient tcpConnection(_deviceIpStr, _deviceControlPort);
+      POSLVComTCP device(tcpConnection);
+      std::shared_ptr<Packet> ctrlPacket(
+        Factory<uint16_t, Message>::getInstance().create(90));
+      ProgramControl& ctrlMsg =
+        ctrlPacket->messageCast().typeCast<ProgramControl>();
+      ctrlMsg.mControl = 0;
+      ctrlMsg.mTransactionNumber = transactionNumber++;
+      std::shared_ptr<Packet> dgpsPacket(
+        Factory<uint16_t, Message>::getInstance().create(37));
+      BaseGPS1Setup& dgpsMsg =
+        dgpsPacket->messageCast().typeCast<BaseGPS1Setup>();
+      dgpsMsg.mTransactionNumber = transactionNumber++;
+      if (request.mode == "cmr")
+        dgpsMsg.mBaseGPSInputType = 3;
+      else if (request.mode == "rtcm1")
+        dgpsMsg.mBaseGPSInputType = 1;
+      else
+        dgpsMsg.mBaseGPSInputType = 2;
+      dgpsMsg.mLineControl = 0;
+      dgpsMsg.mModemControl = 0;
+      dgpsMsg.mConnectionControl = 0;
+      dgpsMsg.mTimeoutLength = 0;
+      try {
+        device.writePacket(ctrlPacket);
+        device.writePacket(dgpsPacket);
+        ctrlMsg.mControl = 1;
+        ctrlMsg.mTransactionNumber = transactionNumber++;
+        device.writePacket(ctrlPacket);
+      }
+      catch (const IOException& e) {
+        ROS_WARN_STREAM("IOException: " << e.what());
+        response.response = false;
+        response.message = e.what();
+      }
+      catch (const SystemException& e) {
+        ROS_WARN_STREAM("SystemException: " << e.what());
+        response.response = false;
+        response.message = e.what();
+      }
+    }
+    return true;
+  }
 
   void PosLvNode::publishVehicleNavigationSolution(const ros::Time& timestamp,
       const VehicleNavigationSolution& vns) {
@@ -396,6 +454,8 @@ namespace poslv {
     _nodeHandle.param<std::string>("connection/device_ip", _deviceIpStr,
       "129.132.39.171");
     _nodeHandle.param<int>("connection/device_port", _devicePort, 5602);
+    _nodeHandle.param<int>("connection/device_control_port", _deviceControlPort,
+      5601);
     _nodeHandle.param<double>("connection/retry_timeout", _retryTimeout, 1);
     _nodeHandle.param<double>("diagnostics/vns_min_freq", _vnsMinFreq, 80);
     _nodeHandle.param<double>("diagnostics/vns_max_freq", _vnsMaxFreq, 120);
