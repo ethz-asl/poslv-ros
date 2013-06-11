@@ -196,6 +196,8 @@ namespace poslv {
         ctrlMsg.mControl = 1;
         ctrlMsg.mTransactionNumber = transactionNumber++;
         device.writePacket(ctrlPacket);
+        response.response = true;
+        response.message = "Success";
       }
       catch (const IOException& e) {
         ROS_WARN_STREAM("IOException: " << e.what());

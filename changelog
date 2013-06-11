@@ -1,3 +1,9 @@
+poslv-ros (0.1-38) precise; urgency=low
+
+  * error in the service response 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 11 Jun 2013 21:01:56 +0200
+
 poslv-ros (0.1-37) precise; urgency=low
 
   * adding service for switching rtcm to cmr 
