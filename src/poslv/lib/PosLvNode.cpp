@@ -191,8 +191,11 @@ namespace poslv {
       dgpsMsg.mConnectionControl = 0;
       dgpsMsg.mTimeoutLength = 0;
       try {
+        Timer timer;
         device.writePacket(ctrlPacket);
+        timer.sleep(0.1);
         device.writePacket(dgpsPacket);
+        timer.sleep(0.1);
         ctrlMsg.mControl = 1;
         ctrlMsg.mTransactionNumber = transactionNumber++;
         device.writePacket(ctrlPacket);

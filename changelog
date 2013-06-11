@@ -1,3 +1,9 @@
+poslv-ros (0.1-39) precise; urgency=low
+
+  * adding a sleep in service 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 11 Jun 2013 21:10:30 +0200
+
 poslv-ros (0.1-38) precise; urgency=low
 
   * error in the service response 
