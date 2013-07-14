@@ -1,3 +1,9 @@
+poslv-ros (0.1-40) precise; urgency=low
+
+  * update version
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Sun, 14 Jul 2013 15:52:56 +0000
+
 poslv-ros (0.1-39) precise; urgency=low
 
   * adding a sleep in service 
