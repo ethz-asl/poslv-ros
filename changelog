@@ -1,3 +1,9 @@
+poslv-ros (0.1-41) precise; urgency=low
+
+  * adding pkg-config 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 25 Mar 2014 17:03:46 +0100
+
 poslv-ros (0.1-40) precise; urgency=low
 
   * update version

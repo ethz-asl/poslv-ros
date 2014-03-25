@@ -5,3 +5,4 @@ remake_ros_package(
   EXTRA_RUN_DEPENDS libposlv
   DESCRIPTION "Driver for Applanix POS LV devices."
 )
+remake_ros_package_config_generate(PACKAGE poslv EXTRA_CFLAGS -std=c++0x)
