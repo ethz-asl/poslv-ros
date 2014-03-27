@@ -1,3 +1,9 @@
+poslv-ros (0.1-42) precise; urgency=low
+
+  * issues with groovy 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Thu, 27 Mar 2014 13:41:39 +0100
+
 poslv-ros (0.1-41) precise; urgency=low
 
   * adding pkg-config 
