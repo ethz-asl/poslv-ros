@@ -1,3 +1,9 @@
+poslv-ros (0.1-43) trusty; urgency=low
+
+  * porting to indigo
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 16 Sep 2014 18:52:01 +0200
+
 poslv-ros (0.1-42) precise; urgency=low
 
   * issues with groovy 
