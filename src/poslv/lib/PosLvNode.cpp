@@ -23,6 +23,7 @@
 #include <diagnostic_updater/publisher.h>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 #include <libposlv/types/VehicleNavigationSolution.h>
 #include <libposlv/types/VehicleNavigationPerformance.h>
@@ -136,18 +137,18 @@ namespace poslv {
     _updater.setHardwareID("POS LV 220");
     _updater.add("TCP connection", this, &PosLvNode::diagnoseTCPConnection);
     _updater.add("System status", this, &PosLvNode::diagnoseSystemStatus);
-    _vnsFreq.reset(new diagnostic_updater::HeaderlessTopicDiagnostic(
+    _vnsFreq = std::make_shared<diagnostic_updater::HeaderlessTopicDiagnostic>(
       "vehicle_navigation_solution", _updater,
       diagnostic_updater::FrequencyStatusParam(&_vnsMinFreq, &_vnsMaxFreq,
-      0.1, 10)));
-    _vnpFreq.reset(new diagnostic_updater::HeaderlessTopicDiagnostic(
+      0.1, 10));
+    _vnpFreq = std::make_shared<diagnostic_updater::HeaderlessTopicDiagnostic>(
       "vehicle_navigation_performance", _updater,
       diagnostic_updater::FrequencyStatusParam(&_vnpMinFreq, &_vnpMaxFreq,
-      0.1, 10)));
-    _dmiFreq.reset(new diagnostic_updater::HeaderlessTopicDiagnostic(
+      0.1, 10));
+    _dmiFreq = std::make_shared<diagnostic_updater::HeaderlessTopicDiagnostic>(
       "time_tagged_dmi_data", _updater,
       diagnostic_updater::FrequencyStatusParam(&_dmiMinFreq, &_dmiMaxFreq,
-      0.1, 10)));
+      0.1, 10));
     _updater.force_update();
   }
 
@@ -218,86 +219,90 @@ namespace poslv {
 
   void PosLvNode::publishVehicleNavigationSolution(const ros::Time& timestamp,
       const VehicleNavigationSolution& vns) {
-    boost::shared_ptr<poslv::VehicleNavigationSolutionMsg> vnsMsg(
-      new poslv::VehicleNavigationSolutionMsg);
-    vnsMsg->header.stamp = timestamp;
-    vnsMsg->header.frame_id = _frameId;
-    vnsMsg->header.seq = _vnsPacketCounter++;
-    vnsMsg->timeDistance.time1 = vns.mTimeDistance.mTime1;
-    vnsMsg->timeDistance.time2 = vns.mTimeDistance.mTime2;
-    vnsMsg->timeDistance.distanceTag = vns.mTimeDistance.mDistanceTag;
-    vnsMsg->timeDistance.timeType = vns.mTimeDistance.mTimeType;
-    vnsMsg->timeDistance.distanceType = vns.mTimeDistance.mDistanceType;
-    vnsMsg->latitude = vns.mLatitude;
-    vnsMsg->longitude = vns.mLongitude;
-    vnsMsg->altitude = vns.mAltitude;
-    vnsMsg->northVelocity = vns.mNorthVelocity;
-    vnsMsg->eastVelocity = vns.mEastVelocity;
-    vnsMsg->downVelocity = vns.mDownVelocity;
-    vnsMsg->roll = vns.mRoll;
-    vnsMsg->pitch = vns.mPitch;
-    vnsMsg->heading = vns.mHeading;
-    vnsMsg->wanderAngle = vns.mWanderAngle;
-    vnsMsg->trackAngle = vns.mTrackAngle;
-    vnsMsg->speed = vns.mSpeed;
-    vnsMsg->angularRateLong = vns.mAngularRateLong;
-    vnsMsg->angularRateTrans = vns.mAngularRateTrans;
-    vnsMsg->angularRateDown = vns.mAngularRateDown;
-    vnsMsg->accLong = vns.mAccLong;
-    vnsMsg->accTrans = vns.mAccTrans;
-    vnsMsg->accDown = vns.mAccDown;
-    vnsMsg->alignementStatus = vns.mAlignementStatus;
-    _vehicleNavigationSolutionPublisher.publish(vnsMsg);
+    if (_vehicleNavigationSolutionPublisher.getNumSubscribers() > 0) {
+      auto vnsMsg = boost::make_shared<poslv::VehicleNavigationSolutionMsg>();
+      vnsMsg->header.stamp = timestamp;
+      vnsMsg->header.frame_id = _frameId;
+      vnsMsg->header.seq = _vnsPacketCounter++;
+      vnsMsg->timeDistance.time1 = vns.mTimeDistance.mTime1;
+      vnsMsg->timeDistance.time2 = vns.mTimeDistance.mTime2;
+      vnsMsg->timeDistance.distanceTag = vns.mTimeDistance.mDistanceTag;
+      vnsMsg->timeDistance.timeType = vns.mTimeDistance.mTimeType;
+      vnsMsg->timeDistance.distanceType = vns.mTimeDistance.mDistanceType;
+      vnsMsg->latitude = vns.mLatitude;
+      vnsMsg->longitude = vns.mLongitude;
+      vnsMsg->altitude = vns.mAltitude;
+      vnsMsg->northVelocity = vns.mNorthVelocity;
+      vnsMsg->eastVelocity = vns.mEastVelocity;
+      vnsMsg->downVelocity = vns.mDownVelocity;
+      vnsMsg->roll = vns.mRoll;
+      vnsMsg->pitch = vns.mPitch;
+      vnsMsg->heading = vns.mHeading;
+      vnsMsg->wanderAngle = vns.mWanderAngle;
+      vnsMsg->trackAngle = vns.mTrackAngle;
+      vnsMsg->speed = vns.mSpeed;
+      vnsMsg->angularRateLong = vns.mAngularRateLong;
+      vnsMsg->angularRateTrans = vns.mAngularRateTrans;
+      vnsMsg->angularRateDown = vns.mAngularRateDown;
+      vnsMsg->accLong = vns.mAccLong;
+      vnsMsg->accTrans = vns.mAccTrans;
+      vnsMsg->accDown = vns.mAccDown;
+      vnsMsg->alignementStatus = vns.mAlignementStatus;
+      _vehicleNavigationSolutionPublisher.publish(vnsMsg);
+    }
     _vnsFreq->tick();
   }
 
   void PosLvNode::publishVehicleNavigationPerformance(
       const ros::Time& timestamp, const VehicleNavigationPerformance& vnp) {
-    boost::shared_ptr<poslv::VehicleNavigationPerformanceMsg> vnpMsg(
-      new poslv::VehicleNavigationPerformanceMsg);
-    vnpMsg->header.stamp = timestamp;
-    vnpMsg->header.frame_id = _frameId;
-    vnpMsg->header.seq = _vnpPacketCounter++;
-    vnpMsg->timeDistance.time1 = vnp.mTimeDistance.mTime1;
-    vnpMsg->timeDistance.time2 = vnp.mTimeDistance.mTime2;
-    vnpMsg->timeDistance.distanceTag = vnp.mTimeDistance.mDistanceTag;
-    vnpMsg->timeDistance.timeType = vnp.mTimeDistance.mTimeType;
-    vnpMsg->timeDistance.distanceType = vnp.mTimeDistance.mDistanceType;
-    vnpMsg->northPositionRMSError = vnp.mNorthPositionRMSError;
-    vnpMsg->eastPositionRMSError = vnp.mEastPositionRMSError;
-    vnpMsg->downPositionRMSError = vnp.mDownPositionRMSError;
-    vnpMsg->northVelocityRMSError = vnp.mNorthVelocityRMSError;
-    vnpMsg->eastVelocityRMSError = vnp.mEastVelocityRMSError;
-    vnpMsg->downVelocityRMSError = vnp.mDownVelocityRMSError;
-    vnpMsg->rollRMSError = vnp.mRollRMSError;
-    vnpMsg->pitchRMSError = vnp.mPitchRMSError;
-    vnpMsg->headingRMSError = vnp.mHeadingRMSError;
-    vnpMsg->errorEllipsoidSemiMajor = vnp.mErrorEllipsoidSemiMajor;
-    vnpMsg->errorEllipsoidSemiMinor = vnp.mErrorEllipsoidSemiMinor;
-    vnpMsg->errorEllipsoidOrientation = vnp.mErrorEllipsoidOrientation;
-    _vehicleNavigationPerformancePublisher.publish(vnpMsg);
+    if (_vehicleNavigationPerformancePublisher.getNumSubscribers() > 0) {
+      auto vnpMsg =
+        boost::make_shared<poslv::VehicleNavigationPerformanceMsg>();
+      vnpMsg->header.stamp = timestamp;
+      vnpMsg->header.frame_id = _frameId;
+      vnpMsg->header.seq = _vnpPacketCounter++;
+      vnpMsg->timeDistance.time1 = vnp.mTimeDistance.mTime1;
+      vnpMsg->timeDistance.time2 = vnp.mTimeDistance.mTime2;
+      vnpMsg->timeDistance.distanceTag = vnp.mTimeDistance.mDistanceTag;
+      vnpMsg->timeDistance.timeType = vnp.mTimeDistance.mTimeType;
+      vnpMsg->timeDistance.distanceType = vnp.mTimeDistance.mDistanceType;
+      vnpMsg->northPositionRMSError = vnp.mNorthPositionRMSError;
+      vnpMsg->eastPositionRMSError = vnp.mEastPositionRMSError;
+      vnpMsg->downPositionRMSError = vnp.mDownPositionRMSError;
+      vnpMsg->northVelocityRMSError = vnp.mNorthVelocityRMSError;
+      vnpMsg->eastVelocityRMSError = vnp.mEastVelocityRMSError;
+      vnpMsg->downVelocityRMSError = vnp.mDownVelocityRMSError;
+      vnpMsg->rollRMSError = vnp.mRollRMSError;
+      vnpMsg->pitchRMSError = vnp.mPitchRMSError;
+      vnpMsg->headingRMSError = vnp.mHeadingRMSError;
+      vnpMsg->errorEllipsoidSemiMajor = vnp.mErrorEllipsoidSemiMajor;
+      vnpMsg->errorEllipsoidSemiMinor = vnp.mErrorEllipsoidSemiMinor;
+      vnpMsg->errorEllipsoidOrientation = vnp.mErrorEllipsoidOrientation;
+      _vehicleNavigationPerformancePublisher.publish(vnpMsg);
+    }
     _vnpFreq->tick();
   }
 
   void PosLvNode::publishTimeTaggedDMIData(
       const ros::Time& timestamp, const TimeTaggedDMIData& dmi) {
-    boost::shared_ptr<poslv::TimeTaggedDMIDataMsg> dmiMsg(
-      new poslv::TimeTaggedDMIDataMsg);
-    dmiMsg->header.stamp = timestamp;
-    dmiMsg->header.frame_id = _frameId;
-    dmiMsg->header.seq = _dmiPacketCounter++;
-    dmiMsg->timeDistance.time1 = dmi.mTimeDistance.mTime1;
-    dmiMsg->timeDistance.time2 = dmi.mTimeDistance.mTime2;
-    dmiMsg->timeDistance.distanceTag = dmi.mTimeDistance.mDistanceTag;
-    dmiMsg->timeDistance.timeType = dmi.mTimeDistance.mTimeType;
-    dmiMsg->timeDistance.distanceType = dmi.mTimeDistance.mDistanceType;
-    dmiMsg->signedDistanceTraveled = dmi.mSignedDistanceTraveled;
-    dmiMsg->unsignedDistanceTraveled = dmi.mUnsignedDistanceTraveled;
-    dmiMsg->dmiScaleFactor = dmi.mDMIScaleFactor;
-    dmiMsg->dataStatus = dmi.mDataStatus;
-    dmiMsg->dmiType = dmi.mDMIType;
-    dmiMsg->dmiDataRate = dmi.mDMIDataRate;
-    _timeTaggedDMIDataPublisher.publish(dmiMsg);
+    if (_timeTaggedDMIDataPublisher.getNumSubscribers() > 0) {
+      auto dmiMsg = boost::make_shared<poslv::TimeTaggedDMIDataMsg>();
+      dmiMsg->header.stamp = timestamp;
+      dmiMsg->header.frame_id = _frameId;
+      dmiMsg->header.seq = _dmiPacketCounter++;
+      dmiMsg->timeDistance.time1 = dmi.mTimeDistance.mTime1;
+      dmiMsg->timeDistance.time2 = dmi.mTimeDistance.mTime2;
+      dmiMsg->timeDistance.distanceTag = dmi.mTimeDistance.mDistanceTag;
+      dmiMsg->timeDistance.timeType = dmi.mTimeDistance.mTimeType;
+      dmiMsg->timeDistance.distanceType = dmi.mTimeDistance.mDistanceType;
+      dmiMsg->signedDistanceTraveled = dmi.mSignedDistanceTraveled;
+      dmiMsg->unsignedDistanceTraveled = dmi.mUnsignedDistanceTraveled;
+      dmiMsg->dmiScaleFactor = dmi.mDMIScaleFactor;
+      dmiMsg->dataStatus = dmi.mDataStatus;
+      dmiMsg->dmiType = dmi.mDMIType;
+      dmiMsg->dmiDataRate = dmi.mDMIDataRate;
+      _timeTaggedDMIDataPublisher.publish(dmiMsg);
+    }
     _dmiFreq->tick();
   }
 
@@ -351,7 +356,8 @@ namespace poslv {
   }
 
   void PosLvNode::spin() {
-    _tcpConnection.reset(new TCPConnectionClient(_deviceIpStr, _devicePort));
+    _tcpConnection = std::make_shared<TCPConnectionClient>(_deviceIpStr,
+      _devicePort);
     POSLVComTCP device(*_tcpConnection);
     Timer timer;
     while (_nodeHandle.ok()) {

@@ -1,3 +1,9 @@
+poslv-ros (0.1-44) precise; urgency=low
+
+  * cleaning the code 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Fri, 26 Sep 2014 10:47:08 +0200
+
 poslv-ros (0.1-43) trusty; urgency=low
 
   * porting to indigo
