@@ -19,12 +19,12 @@
 ################################################################################
 
 import sys, roslib, rospy
-from poslv.srv import *
+from poslv_msgs.srv import *
 
 def setMode(mode):
-  rospy.wait_for_service("/poslv/set_dgps")
+  rospy.wait_for_service("/poslv_driver/set_dgps")
   try:
-    request = rospy.ServiceProxy("/poslv/set_dgps", SetDGPS)
+    request = rospy.ServiceProxy("/poslv_driver/set_dgps", SetDGPS)
     response = request(mode)
     if response.response:
       print "Mode set to: %s" %(mode)

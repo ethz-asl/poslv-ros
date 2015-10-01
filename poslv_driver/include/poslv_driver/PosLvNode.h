@@ -31,7 +31,7 @@
 #include <ros/ros.h>
 #include <diagnostic_updater/diagnostic_updater.h>
 
-#include "poslv/SetDGPS.h"
+#include <poslv_msgs/SetDGPS.h>
 
 class VehicleNavigationSolution;
 class VehicleNavigationPerformance;
@@ -97,8 +97,8 @@ namespace poslv {
     /// Retrieves parameters
     void getParameters();
     /// Set DGPS service
-    bool setDgps(poslv::SetDGPS::Request& request, poslv::SetDGPS::Response&
-      response);
+    bool setDgps(poslv_msgs::SetDGPS::Request& request,
+      poslv_msgs::SetDGPS::Response& response);
     /** @}
       */
 

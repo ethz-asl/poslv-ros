@@ -1,0 +1,21 @@
+<package>
+  <name>poslv_driver</name>
+  <version>0.1.0</version>
+  <description>
+    ROS wrapper around libposlv (driver node)
+  </description>
+  <author>Jerome Maye</author>
+  <maintainer email="ralf.kaestner@gmail.com">Ralf Kaestner</maintainer>
+  <license>GNU Lesser General Public License (LGPL)</license>
+  <url>http://github.com/ethz-asl/poslv-ros</url>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>poslv_msgs</build_depend>
+  
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>poslv_msgs</run_depend>
+</package>

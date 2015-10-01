@@ -22,7 +22,7 @@
 
 #include <ros/ros.h>
 
-#include "PosLvNode.h"
+#include <poslv_driver/PosLvNode.h>
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "poslv");

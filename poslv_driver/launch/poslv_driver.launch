@@ -1,0 +1,5 @@
+<launch>
+  <node name="poslv_driver" pkg="poslv_driver" type="poslv_driver_node" output="screen" respawn="true">
+    <rosparam command="load" file="$(find poslv_driver)/config/poslv_driver.yaml"/>
+  </node>
+</launch>

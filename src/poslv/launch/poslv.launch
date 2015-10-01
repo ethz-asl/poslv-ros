@@ -1,5 +1,0 @@
-<launch>
-  <node name="poslv" pkg="poslv" type="poslv_node" output="screen" respawn="true">
-    <rosparam command="load" file="$(find poslv)/etc/poslv.yaml"/>
-  </node>
-</launch>

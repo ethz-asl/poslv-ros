@@ -1,5 +1,5 @@
 Header header
-poslv/TimeDistanceMsg timeDistance
+poslv_msgs/TimeDistanceMsg timeDistance
 float64 signedDistanceTraveled
 float64 unsignedDistanceTraveled
 uint16 dmiScaleFactor

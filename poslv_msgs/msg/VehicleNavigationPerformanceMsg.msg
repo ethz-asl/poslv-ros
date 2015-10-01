@@ -1,5 +1,5 @@
 Header header
-poslv/TimeDistanceMsg timeDistance
+poslv_msgs/TimeDistanceMsg timeDistance
 float32 northPositionRMSError
 float32 eastPositionRMSError
 float32 downPositionRMSError

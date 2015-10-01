@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  ******************************************************************************/
 
-#include "PosLvNode.h"
+#include "poslv_driver/PosLvNode.h"
 
 #include <bitset>
 
@@ -45,9 +45,9 @@
 #include <libposlv/types/Packet.h>
 #include <libposlv/types/Group.h>
 
-#include "poslv/VehicleNavigationSolutionMsg.h"
-#include "poslv/VehicleNavigationPerformanceMsg.h"
-#include "poslv/TimeTaggedDMIDataMsg.h"
+#include "poslv_msgs/VehicleNavigationSolutionMsg.h"
+#include "poslv_msgs/VehicleNavigationPerformanceMsg.h"
+#include "poslv_msgs/TimeTaggedDMIDataMsg.h"
 
 namespace poslv {
 
@@ -124,13 +124,13 @@ namespace poslv {
     _iinStatusMsgs[8] = "No solution";
     getParameters();
     _vehicleNavigationSolutionPublisher =
-      _nodeHandle.advertise<poslv::VehicleNavigationSolutionMsg>(
+      _nodeHandle.advertise<poslv_msgs::VehicleNavigationSolutionMsg>(
       "vehicle_navigation_solution", _queueDepth);
     _vehicleNavigationPerformancePublisher =
-      _nodeHandle.advertise<poslv::VehicleNavigationPerformanceMsg>(
+      _nodeHandle.advertise<poslv_msgs::VehicleNavigationPerformanceMsg>(
       "vehicle_navigation_performance", _queueDepth);
     _timeTaggedDMIDataPublisher =
-      _nodeHandle.advertise<poslv::TimeTaggedDMIDataMsg>(
+      _nodeHandle.advertise<poslv_msgs::TimeTaggedDMIDataMsg>(
       "time_tagged_dmi_data", _queueDepth);
     _setDgpsService = _nodeHandle.advertiseService("set_dgps",
       &PosLvNode::setDgps, this);
@@ -159,8 +159,8 @@ namespace poslv {
 /* Methods                                                                    */
 /******************************************************************************/
 
-  bool PosLvNode::setDgps(poslv::SetDGPS::Request& request,
-      poslv::SetDGPS::Response& response) {
+  bool PosLvNode::setDgps(poslv_msgs::SetDGPS::Request& request,
+      poslv_msgs::SetDGPS::Response& response) {
     static uint16_t transactionNumber = 0;
     if (request.mode != "cmr" && request.mode != "rtcm1" &&
         request.mode != "rtcm2") {
@@ -220,7 +220,7 @@ namespace poslv {
   void PosLvNode::publishVehicleNavigationSolution(const ros::Time& timestamp,
       const VehicleNavigationSolution& vns) {
     if (_vehicleNavigationSolutionPublisher.getNumSubscribers() > 0) {
-      auto vnsMsg = boost::make_shared<poslv::VehicleNavigationSolutionMsg>();
+      auto vnsMsg = boost::make_shared<poslv_msgs::VehicleNavigationSolutionMsg>();
       vnsMsg->header.stamp = timestamp;
       vnsMsg->header.frame_id = _frameId;
       vnsMsg->header.seq = _vnsPacketCounter++;
@@ -257,7 +257,7 @@ namespace poslv {
       const ros::Time& timestamp, const VehicleNavigationPerformance& vnp) {
     if (_vehicleNavigationPerformancePublisher.getNumSubscribers() > 0) {
       auto vnpMsg =
-        boost::make_shared<poslv::VehicleNavigationPerformanceMsg>();
+        boost::make_shared<poslv_msgs::VehicleNavigationPerformanceMsg>();
       vnpMsg->header.stamp = timestamp;
       vnpMsg->header.frame_id = _frameId;
       vnpMsg->header.seq = _vnpPacketCounter++;
@@ -286,7 +286,7 @@ namespace poslv {
   void PosLvNode::publishTimeTaggedDMIData(
       const ros::Time& timestamp, const TimeTaggedDMIData& dmi) {
     if (_timeTaggedDMIDataPublisher.getNumSubscribers() > 0) {
-      auto dmiMsg = boost::make_shared<poslv::TimeTaggedDMIDataMsg>();
+      auto dmiMsg = boost::make_shared<poslv_msgs::TimeTaggedDMIDataMsg>();
       dmiMsg->header.stamp = timestamp;
       dmiMsg->header.frame_id = _frameId;
       dmiMsg->header.seq = _dmiPacketCounter++;
